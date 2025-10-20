@@ -356,13 +356,15 @@
   /* Mobile Styling */
   @media (max-width: 768px) {
     body {
-      height: auto; /* Change from 100vh to auto for mobile */
+      height: 100vh; /* Change from 100vh to auto for mobile */
       min-height: 100vh; /* Ensure at least full viewport height */
+      overflow: hidden;
     }
     
     .main-app {
       flex-direction: column;
       flex-grow: 1;
+      overflow-y: auto;
     }
     
     .options-panel,
