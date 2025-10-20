@@ -1,14 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Document</title>
-</head>
-<body>
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Pathfinder's Labyrinth</title>
+  </head>
+  <body>
+    <header class="header">
+      <h2>Maze Pathfinder</h2>
+      <div class="header-quick-options">
+        <button>Clear Maze</button>
+        <button>Random Maze</button>
+        <button>Start Exploring</button>
+      </div>
+    </header>
+
+    <main class="main-app">
+      <section class="options-panel panel">
+        <div class="setup options-group-section">
+          <h3 class="option-group-section-title">Maze setup</h3>
+          <div class="maze-config-input">
+            <label for="rows">No of rows</label>
+            <input
+              type="number"
+              name="rows"
+              id="rows"
+              min="4"
+              max="50"
+              value="4"
+            />
+          </div>
+
+          <div class="maze-config-input">
+            <label for="columns">No of columns</label>
+            <input
+              type="number"
+              name="columns"
+              id="columns"
+              min="4"
+              max="50"
+              value="4"
+            />
+          </div>
+        </div>
+
+        <div class="maze-generation options-group-section">
+          <h3 class="option-group-section-title">Maze Generation</h3>
+          <div class="options-group">
+            <button>Random Walls</button>
+            <button>Perfect Maze</button>
+            <button>Custom</button>
+          </div>
+        </div>
+
+        <div class="algorithms options-group-section">
+          <h3 class="option-group-section-title">Algorithms</h3>
+          <div class="options-group algorithms">
+            <button class="algorithm-option">Breadth First Search</button>
+            <button class="algorithm-option">Depth First Search</button>
+            <button class="algorithm-option">Dijkstra</button>
+            <button class="algorithm-option">A*</button>
+          </div>
+        </div>
+
+        <div class="tools options-group-section">
+          <h3 class="option-group-section-title">Tools</h3>
+          <div class="options-group tools">
+            <button class="design-tools">Start</button>
+            <button class="design-tools">Finish</button>
+            <button class="design-tools">Wall</button>
+            <button class="design-tools">Trap</button>
+            <button class="design-tools">Eraser</button>
+          </div>
+        </div>
+
+        <div class="controls options-group-section">
+          <h3 class="option-group-section-title">Controls</h3>
+          <div class="options-group controls">
+            <label for="speed">Speed</label>
+            <input
+              type="range"
+              name="speed"
+              id="speed"
+              min="1"
+              max="10"
+              value="5"
+            />
+            <button>Pause</button>
+            <button>Resume</button>
+            <button>Visualize</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="canvas">
+        <canvas width="300" height="300"></canvas>
+      </section>
+
+      <section class="info-panel panel">
+        <h2>Algorithm Info</h2>
+
+        <div class="info-section">
+          <h4>Title</h4>
+          <p>Algorithm Name</p>
+        </div>
+
+        <div class="info-section">
+          <h4>History</h4>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
+            eius iste voluptate dolorum, magnam ipsum totam esse porro dolore
+            vel, saepe fuga? Corporis, alias facere?
+          </p>
+        </div>
+
+        <div class="info-section">
+          <h4>How It Works</h4>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
+            eius iste voluptate dolorum, magnam ipsum totam esse porro dolore
+            vel, saepe fuga? Corporis, alias facere?
+          </p>
+        </div>
+
+        <div class="info-section">
+          <h4>Time Complexity</h4>
+          <p>O(n^2)</p>
+        </div>
+
+        <div class="info-section">
+          <h4>Space Complexity</h4>
+          <p>O(n^2)</p>
+        </div>
+
+        <div class="info-section">
+          <h4>Fun Fact</h4>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem
+            officia corrupti est ab doloribus necessitatibus libero, fugit
+            dolores explicabo excepturi.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">Put Something Here Later</footer>
 
     <script src="script.js"></script>
-</body>
+    <script
+      src="https://kit.fontawesome.com/18aba390b9.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
