@@ -1,6 +1,6 @@
 // algorithms/algorithmInfo.js
 
-const AlgorithmInfo = {
+export const AlgorithmInfo = {
     BFS: {
         title: "Breadth First Search (BFS)",
         history: "BFS was first invented in the 1940s for solving problems in graph theory. It was formally presented by Edward F. Moore in 1959 for finding the shortest path out of a maze.",

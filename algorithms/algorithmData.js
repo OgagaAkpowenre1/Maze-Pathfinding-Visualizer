@@ -1,6 +1,6 @@
 // algorithms/algorithmData.js
 
-const AlgorithmData = {
+export const AlgorithmData = {
     BFS: {
         id: 'bfs',
         name: 'Breadth First Search',

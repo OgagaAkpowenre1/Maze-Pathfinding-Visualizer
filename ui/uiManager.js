@@ -1,6 +1,9 @@
 // ui/uiManager.js
+import { AlgorithmInfo } from "../algorithms/algorithmInfo.js";
+import { AlgorithmData } from "../algorithms/algorithmData.js";
+import { StateManager } from "./stateManager.js";
 
-const UIManager = {
+export const UIManager = {
     init() {
         this.setupAlgorithmButtons();
         this.setupToolButtons();

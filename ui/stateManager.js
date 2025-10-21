@@ -1,6 +1,9 @@
 // ui/stateManager.js
 
-const AppState = {
+import { AlgorithmInfo } from "../algorithms/algorithmInfo.js";
+import { AlgorithmData } from "../algorithms/algorithmData.js";
+
+export const AppState = {
     currentAlgorithm: 'BFS',
     mazeConfig: {
         rows: 4,
@@ -19,7 +22,7 @@ const AppState = {
 };
 
 // State getters and setters
-const StateManager = {
+export const StateManager = {
     getCurrentAlgorithm() {
         return AppState.currentAlgorithm;
     },

@@ -1,4 +1,4 @@
-import { CELL_STATES } from "./cellStates";
+import { CELL_STATES } from "./cellStates.js";
 
 class GridManager {
   constructor(rows, columns) {
