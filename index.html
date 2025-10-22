@@ -13,6 +13,12 @@
         <button>Clear Maze</button>
         <button>Random Maze</button>
         <button>Start Exploring</button>
+        <button id="toggle-options" class="sidebar-toggle" title="Toggle Options Panel">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="toggle-info" class="sidebar-toggle" title="Toggle Info Panel">
+          <i class="fas fa-chevron-right"></i>
+        </button>
       </div>
     </header>
 
@@ -43,6 +49,7 @@
               value="4"
             />
           </div>
+           <button id="apply-size" class="apply-size-btn">Apply Grid Size</button>
         </div>
 
         <div class="maze-generation options-group-section">
@@ -56,11 +63,18 @@
 
         <div class="algorithms options-group-section">
           <h3 class="option-group-section-title">Algorithms</h3>
+          <!-- Update your algorithm buttons in index.html -->
           <div class="options-group algorithms">
-            <button class="algorithm-option">Breadth First Search</button>
-            <button class="algorithm-option">Depth First Search</button>
-            <button class="algorithm-option">Dijkstra</button>
-            <button class="algorithm-option">A*</button>
+            <button class="algorithm-option" data-algorithm="BFS">
+              Breadth First Search
+            </button>
+            <button class="algorithm-option" data-algorithm="DFS">
+              Depth First Search
+            </button>
+            <button class="algorithm-option" data-algorithm="DIJKSTRA">
+              Dijkstra
+            </button>
+            <button class="algorithm-option" data-algorithm="ASTAR">A*</button>
           </div>
         </div>
 
@@ -145,13 +159,9 @@
       </section>
     </main>
 
-    
-
     <footer class="footer">Put Something Here Later</footer>
 
     <script type="module" src="script.js"></script>
-
-    
 
     <script
       src="https://kit.fontawesome.com/18aba390b9.js"

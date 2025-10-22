@@ -1,5 +1,6 @@
 // canvas/gridManager.js
 
+import { debug } from "../script.js";
 import { CELL_STATES } from "./cellStates.js";
 
 class GridManager {
@@ -112,6 +113,7 @@ class GridManager {
 
   // Resize grid (useful when user changes dimensions)
   resizeGrid(newRows, newColumns) {
+    debug("Grid Manager resizing grid", newRows, newColumns);
     this.rows = newRows;
     this.columns = newColumns;
     this.initializeGrid();
