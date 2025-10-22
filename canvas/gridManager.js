@@ -1,3 +1,5 @@
+// canvas/gridManager.js
+
 import { CELL_STATES } from "./cellStates.js";
 
 class GridManager {
@@ -5,7 +7,7 @@ class GridManager {
     if (rows < 1 || columns < 1) {
       throw new Error("Grid must have at least 1 row and 1 column");
     }
-
+ 
     this.startPosition = null;
     this.endPosition = null;
     this.grid = [];

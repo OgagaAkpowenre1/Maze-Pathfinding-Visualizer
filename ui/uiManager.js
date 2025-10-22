@@ -7,7 +7,7 @@ export const UIManager = {
     init() {
         this.setupAlgorithmButtons();
         this.setupToolButtons();
-        this.setupMazeConfigInputs();
+        this.setupMazeConfigInputs(); 
         this.setupSpeedControl();
         this.setupHeaderButtons();
         

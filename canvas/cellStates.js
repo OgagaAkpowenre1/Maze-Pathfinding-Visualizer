@@ -4,4 +4,4 @@ export const CELL_STATES = {
   TRAP: 2,
   START: 3,
   END: 4,
-};
+}; 

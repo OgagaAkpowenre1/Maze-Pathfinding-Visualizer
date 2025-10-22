@@ -1,14 +1,13 @@
-// Import everything at the top
+//script.js
+
 import GridManager from "./canvas/gridManager.js";
 import { CELL_STATES } from "./canvas/cellStates.js";
-import { AlgorithmData } from "./algorithms/algorithmData.js";
-import { AlgorithmInfo } from "./algorithms/algorithmInfo.js";
 import { StateManager } from "./ui/stateManager.js";
 import { UIManager } from "./ui/uiManager.js";
+import { MazeController } from "./canvas/mazeController.js";
 
-// Custom debug function
 // Enhanced debug function with file and line information
-function debug(...args) {
+export function debug(...args) {
   // Get stack trace to find caller information
   const stack = new Error().stack;
   let callerInfo = 'unknown';
@@ -73,7 +72,7 @@ function debug(...args) {
     const clearBtn = document.createElement('button');
     clearBtn.textContent = 'Clear';
     clearBtn.style.cssText = 'position:absolute; top:5px; right:5px; font-size:10px; padding:2px 5px;';
-    clearBtn.onclick = () => debugPanel.innerHTML = '';
+    clearBtn.onclick = () => {debugPanel.innerHTML = ''; debugPanel.appendChild(clearBtn)};
     debugPanel.appendChild(clearBtn);
     
     document.body.appendChild(debugPanel);
@@ -108,7 +107,7 @@ function debug(...args) {
 }
 
 // Error-catching version that shows where errors occur
-function debugError(context, error) {
+export function debugError(context, error) {
   debug(`❌ ERROR in ${context}:`, error.message || error);
   debug('Stack trace:', error.stack);
 }
@@ -136,6 +135,20 @@ document.addEventListener("DOMContentLoaded", function () {
   debug("DOM Content Loaded - Starting application initialization...");
 
   try {
+    //Get canvas element
+    const canvas = document.querySelector('canvas');
+    debug("Canvas element found");
+
+    //Initialize gridManager with current config
+    const initialConfig = StateManager.getMazeConfig();
+    debug("Initial config set", initialConfig);
+    const gridManager = new GridManager(initialConfig.rows, initialConfig.columns);
+    debug ("Grid Manager initialized");
+    StateManager.setGridManager(gridManager);
+
+     // Initialize MazeController (coordinates canvas + input)
+    const mazeController = new MazeController(canvas, gridManager, StateManager);
+
     // Initialize UI Manager
     debug("Initializing UI Manager...");
     UIManager.init();
@@ -157,28 +170,30 @@ document.addEventListener("DOMContentLoaded", function () {
       debug("Speed changed to:", speed);
     };
 
+    // Update UIManager to handle clear maze
+    const originalHandleHeaderAction = UIManager.handleHeaderAction;
+    UIManager.handleHeaderAction = function(action) {
+        switch(action) {
+            case 'clearMaze':
+                gridManager.clearGrid();
+                mazeController.redraw();
+                break;
+            case 'randomMaze':
+                // TODO: Implement random maze generation
+                break;
+            case 'startVisualization':
+                // TODO: Start algorithm visualization
+                break;
+            default:
+                originalHandleHeaderAction.call(this, action);
+        }
+    };
+
     // Log initial state - now objects will show properly!
     debug("Application initialized");
     debug("Current algorithm:", StateManager.getCurrentAlgorithm());
     debug("Maze config object:", StateManager.getMazeConfig());
     debug("Full app state:", StateManager);
-
-    // Test grid functionality
-    debug("Testing grid functionality...");
-    const gridManager = new GridManager(5, 5);
-
-    // Set some walls
-    gridManager.setCell(0, 1, CELL_STATES.WALL);
-    gridManager.setCell(1, 1, CELL_STATES.WALL);
-
-    // Set start and end
-    gridManager.setCell(0, 0, CELL_STATES.START);
-    gridManager.setCell(4, 4, CELL_STATES.END);
-
-    // Get cell state
-    debug("Start cell state:", gridManager.getCell(0, 0));
-    debug("Ready for pathfinding:", gridManager.isReadyForPathfinding());
-    debug("Full grid state:", gridManager.grid);
 
     debug("🎉 Application fully initialized and working!");
 

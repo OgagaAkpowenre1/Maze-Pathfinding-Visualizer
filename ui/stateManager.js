@@ -4,7 +4,7 @@ import { AlgorithmInfo } from "../algorithms/algorithmInfo.js";
 import { AlgorithmData } from "../algorithms/algorithmData.js";
 
 export const AppState = {
-    currentAlgorithm: 'BFS',
+    currentAlgorithm: 'BFS', 
     mazeConfig: {
         rows: 4,
         columns: 4
@@ -18,7 +18,8 @@ export const AppState = {
         isRunning: false,
         speed: 5,
         isPaused: false
-    }
+    },
+    grid: null
 };
 
 // State getters and setters
@@ -59,6 +60,14 @@ export const StateManager = {
     setVisualizationSpeed(speed) {
         AppState.visualization.speed = speed;
         this.onSpeedChange?.(speed);
+    },
+
+    setGridManager(gridManager) {
+        AppState.grid = gridManager;
+    },
+
+    getGridManager() {
+        return AppState.grid;
     },
 
     // Event callbacks (to be set by UIManager)
