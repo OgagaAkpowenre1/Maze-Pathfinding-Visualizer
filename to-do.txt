@@ -111,3 +111,5 @@
 5. Tool system
 6. Start/end position logic
 7. Error handling and polish
+
+To-do: Add canvas resizing from UI and maybe zoom functionality (change cell size)
