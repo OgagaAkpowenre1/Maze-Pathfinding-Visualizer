@@ -144,21 +144,6 @@ export const UIManager = {
     });
   },
 
-  handleHeaderAction(action) {
-    console.log(`Header action: ${action}`);
-    switch (action) {
-      case "clearMaze":
-        // Clear maze logic
-        break;
-      case "randomMaze":
-        // Generate random maze
-        break;
-      case "startVisualization":
-        // Start algorithm visualization
-        break;
-    }
-  },
-
   setupSidebarToggles() {
     const toggleOptions = document.getElementById("toggle-options");
     const toggleInfo = document.getElementById("toggle-info");
@@ -200,6 +185,72 @@ export const UIManager = {
     } else {
       infoPanel.classList.remove("collapsed");
       toggleInfoIcon.classList.remove("rotated");
+    }
+  },
+
+handleHeaderAction(action) {
+  console.log(`🔘 Header action: ${action}`);
+  switch (action) {
+    case "clearMaze":
+      console.log("Clearing maze...");
+      if (this.gridManager && this.mazeController) {
+        this.gridManager.clearGrid();
+        this.mazeController.redraw();
+      } else {
+        console.error("GridManager or MazeController not available");
+      }
+      break;
+    case "randomMaze":
+      console.log("Generating random maze...");
+      // TODO: Implement random maze generation
+      break;
+    case "startVisualization":
+      console.log("Starting visualization from UI...");
+      this.startVisualization();
+      break;
+  }
+},
+
+startVisualization() {
+  console.log("UIManager: startVisualization called");
+  if (window.startVisualization) {
+      console.log("Calling window.startVisualization...");
+      window.startVisualization();
+  } else {
+      console.error("❌ AlgorithmController not initialized - window.startVisualization is undefined");
+  }
+},
+
+  // startVisualization() {
+  //   if (window.startVisualization) {
+  //     window.startVisualization();
+  //   } else {
+  //     console.error("AlgorithmController not initialized");
+  //   }
+  // },
+
+  // Add these methods for other controls
+  pauseVisualization() {
+    if (window.pauseVisualization) {
+      window.pauseVisualization();
+    }
+  },
+
+  resumeVisualization() {
+    if (window.resumeVisualization) {
+      window.resumeVisualization();
+    }
+  },
+
+  stopVisualization() {
+    if (window.stopVisualization) {
+      window.stopVisualization();
+    }
+  },
+
+  resetVisualization() {
+    if (window.resetVisualization) {
+      window.resetVisualization();
     }
   },
 };

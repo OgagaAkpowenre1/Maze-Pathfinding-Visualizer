@@ -1,0 +1,125 @@
+## Algorithm Implementation Plan
+
+Given your current architecture, here's the optimal plan for implementing algorithm visualization:
+
+### Phase 1: Algorithm Foundation
+
+**1. Create Algorithm Base Class (`algorithms/PathfinderBase.js`)**
+- Abstract base class that all algorithms inherit from
+- Common methods: `findPath()`, `getNeighbors()`, `reconstructPath()`
+- Standardized step-by-step execution for visualization
+- Event system for state changes (node visited, path found, etc.)
+
+**2. Implement Individual Algorithms**
+- `algorithms/BFS.js` - Breadth-First Search
+- `algorithms/DFS.js` - Depth-First Search  
+- `algorithms/Dijkstra.js` - Dijkstra's Algorithm
+- `algorithms/AStar.js` - A* Search
+- Each extends `PathfinderBase` with algorithm-specific logic
+
+### Phase 2: Visualization System
+
+**3. Create Visualization Manager (`canvas/VisualizationManager.js`)**
+- Controls the animation timeline
+- Manages visualization speed
+- Coordinates between algorithm steps and canvas rendering
+- Handles pause/resume/stop functionality
+
+**4. Extend CanvasRenderer for Animation**
+- Add methods for:
+  - `drawVisitedCell(row, col)` - Show explored nodes
+  - `drawCurrentCell(row, col)` - Highlight currently processing node
+  - `drawPathCell(row, col)` - Show final path
+  - `drawFrontier(nodes)` - Show nodes to be explored next
+
+### Phase 3: Integration Architecture
+
+**5. Update StateManager for Algorithm State**
+```javascript
+// Add to AppState
+visualization: {
+    isRunning: false,
+    isPaused: false,
+    currentStep: 0,
+    totalSteps: 0,
+    algorithm: null,
+    speed: 5
+}
+```
+
+**6. Create AlgorithmController (`algorithms/AlgorithmController.js`)**
+- Main coordinator between algorithms and visualization
+- Instantiates the correct algorithm based on selection
+- Converts algorithm steps into visualization commands
+- Manages algorithm lifecycle
+
+### Phase 4: Visual Design
+
+**7. Visual States for Cells:**
+- `EMPTY` - Default white
+- `WALL` - Dark gray/black
+- `START` - Green
+- `END` - Red
+- `VISITED` - Light blue (algorithm has processed this node)
+- `CURRENT` - Yellow (currently being processed)
+- `PATH` - Bright green (final solution path)
+- `FRONTIER` - Light yellow (nodes to be explored)
+
+**8. Animation Approach:**
+- **Step-by-step visualization** (not real-time)
+- Each algorithm "step" shows:
+  1. Current node being processed
+  2. Newly visited nodes
+  3. Frontier/queue state
+  4. Final path reconstruction
+
+### Phase 5: User Interaction
+
+**9. Enhanced Controls:**
+- **Start/Pause/Resume** - Control algorithm execution
+- **Step Forward/Backward** - Move through algorithm steps manually
+- **Speed Control** - Adjust visualization speed
+- **Reset** - Stop and clear visualization
+
+**10. Real-time Info Display:**
+- Show algorithm statistics:
+  - Nodes visited count
+  - Path length
+  - Current step/total steps
+  - Time complexity (theoretical)
+  - Space complexity (theoretical)
+
+### Implementation Order:
+
+1. **BFS First** - Easiest to implement and visualize
+2. **DFS** - Good contrast to BFS
+3. **Dijkstra** - Introduces cost concepts
+4. **A*** - Most complex with heuristics
+
+### Key Architecture Benefits:
+
+**Separation of Concerns:**
+- Algorithms don't know about visualization
+- Visualization doesn't know about algorithm logic
+- StateManager handles communication
+
+**Extensible:**
+- Easy to add new algorithms
+- Simple to modify visualization styles
+- Can swap rendering approaches
+
+**Performance:**
+- Step-based visualization prevents blocking UI
+- Can handle large grids without freezing
+- Memory-efficient state management
+
+### Visualization Flow:
+```
+User clicks "Visualize" 
+→ AlgorithmController creates algorithm instance
+→ Algorithm runs step-by-step, emitting events
+→ VisualizationManager listens to events
+→ CanvasRenderer updates visual state
+→ StateManager tracks progress
+→ User controls playback with pause/step/speed
+```

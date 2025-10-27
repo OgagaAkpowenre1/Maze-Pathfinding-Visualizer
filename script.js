@@ -1,5 +1,4 @@
 //script.js
-
 import GridManager from "./canvas/gridManager.js";
 import { CELL_STATES } from "./canvas/cellStates.js";
 import { StateManager } from "./ui/stateManager.js";
@@ -187,23 +186,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Update UIManager to handle clear maze
-    const originalHandleHeaderAction = UIManager.handleHeaderAction;
-    UIManager.handleHeaderAction = function (action) {
-      switch (action) {
-        case "clearMaze":
-          gridManager.clearGrid();
-          mazeController.redraw();
-          break;
-        case "randomMaze":
-          // TODO: Implement random maze generation
-          break;
-        case "startVisualization":
-          // TODO: Start algorithm visualization
-          break;
-        default:
-          originalHandleHeaderAction.call(this, action);
-      }
-    };
+    // In script.js - replace the override with this:
+    UIManager.gridManager = gridManager;
+    UIManager.mazeController = mazeController;
 
     // Log initial state - now objects will show properly!
     debug("Application initialized");
@@ -212,6 +197,42 @@ document.addEventListener("DOMContentLoaded", function () {
     debug("Full app state:", StateManager);
 
     debug("🎉 Application fully initialized and working!");
+
+
+    // Add this at the end of script.js for testing
+window.testBFS = function() {
+  console.log("Testing BFS manually...");
+  const gridManager = StateManager.getGridManager();
+  const start = gridManager.getStartPosition();
+  const end = gridManager.getEndPosition();
+  
+  console.log("GridManager:", gridManager);
+  console.log("Start:", start);
+  console.log("End:", end);
+  
+  if (!start || !end) {
+      console.error("Need start and end positions");
+      return;
+  }
+  
+  try {
+      const bfs = new BFS(gridManager);
+      console.log("BFS created successfully:", bfs);
+      console.log("BFS methods:", {
+          start: typeof bfs.start,
+          step: typeof bfs.step,
+          initialize: typeof bfs.initialize,
+          executeStep: typeof bfs.executeStep
+      });
+      
+      // Test initialization
+      bfs.initialize();
+      console.log("BFS initialized successfully");
+      
+  } catch (error) {
+      console.error("BFS test failed:", error);
+  }
+};
   } catch (error) {
     // This will now show exactly where the error occurred
     debugError("MAIN_INIT", error);

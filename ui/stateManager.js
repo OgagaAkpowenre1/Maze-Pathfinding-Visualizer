@@ -66,6 +66,29 @@ export const StateManager = {
     this._speedChangeCallbacks.forEach((callback) => callback(speed));
   },
 
+  // Visualization state management
+  setVisualizationState(updates) {
+    AppState.visualization = { ...AppState.visualization, ...updates };
+    // You could add a callback here if needed: this._visualizationChangeCallbacks?.forEach(cb => cb(AppState.visualization));
+  },
+
+  // Individual visualization controls
+  startVisualization() {
+    this.setVisualizationState({ isRunning: true, isPaused: false });
+  },
+
+  pauseVisualization() {
+    this.setVisualizationState({ isPaused: true });
+  },
+
+  resumeVisualization() {
+    this.setVisualizationState({ isPaused: false });
+  },
+
+  stopVisualization() {
+    this.setVisualizationState({ isRunning: false, isPaused: false });
+  },
+
   setGridManager(gridManager) {
     AppState.grid = gridManager;
   },
@@ -96,25 +119,25 @@ export const StateManager = {
     this._speedChangeCallbacks.push(callback);
   },
 
-   // Sidebar state methods
-    getSidebarStates() {
-        return { ...AppState.ui };
-    },
-    
-    toggleOptionsPanel() {
-        AppState.ui.optionsPanelCollapsed = !AppState.ui.optionsPanelCollapsed;
-        this._sidebarStateCallbacks.forEach(callback => callback(AppState.ui));
-    },
-    
-    toggleInfoPanel() {
-        AppState.ui.infoPanelCollapsed = !AppState.ui.infoPanelCollapsed;
-        this._sidebarStateCallbacks.forEach(callback => callback(AppState.ui));
-    },
-    
-    // Callback for sidebar state changes
-    _sidebarStateCallbacks: [],
-    
-    onSidebarStateChange(callback) {
-        this._sidebarStateCallbacks.push(callback);
-    }
+  // Sidebar state methods
+  getSidebarStates() {
+    return { ...AppState.ui };
+  },
+
+  toggleOptionsPanel() {
+    AppState.ui.optionsPanelCollapsed = !AppState.ui.optionsPanelCollapsed;
+    this._sidebarStateCallbacks.forEach((callback) => callback(AppState.ui));
+  },
+
+  toggleInfoPanel() {
+    AppState.ui.infoPanelCollapsed = !AppState.ui.infoPanelCollapsed;
+    this._sidebarStateCallbacks.forEach((callback) => callback(AppState.ui));
+  },
+
+  // Callback for sidebar state changes
+  _sidebarStateCallbacks: [],
+
+  onSidebarStateChange(callback) {
+    this._sidebarStateCallbacks.push(callback);
+  },
 };
