@@ -1,5 +1,6 @@
 // algorithms/AlgorithmController.js
 import { StateManager } from "../ui/stateManager.js";
+import { UIManager } from "../ui/uiManager.js";
 import BFS from "./BFS.js";
 // We'll import other algorithms as we implement them
 // import DFS from './DFS.js';
@@ -60,55 +61,57 @@ export class AlgorithmController {
 
   // Start visualization
   // In algorithms/AlgorithmController.js - update startVisualization method
-startVisualization() {
+  startVisualization() {
     try {
-        console.log("🔄 Starting visualization...");
-        
-        // Stop any running visualization first
-        this.stopVisualization();
+      console.log("🔄 Starting visualization...");
 
-        // Create algorithm instance
-        const algorithmName = StateManager.getCurrentAlgorithm();
-        console.log("Algorithm selected:", algorithmName);
-        
-        // Check if start and end positions are set
-        const start = this.gridManager.getStartPosition();
-        const end = this.gridManager.getEndPosition();
-        console.log("Start position:", start);
-        console.log("End position:", end);
-        
-        if (!start || !end) {
-            throw new Error("Start and end positions must be set before running algorithm");
-        }
+      // Stop any running visualization first
+      this.stopVisualization();
 
-        this.currentAlgorithm = this.createAlgorithm(algorithmName);
-        console.log("Algorithm instance created");
+      // Create algorithm instance
+      const algorithmName = StateManager.getCurrentAlgorithm();
+      console.log("Algorithm selected:", algorithmName);
 
-        // Set up algorithm callbacks
-        this.setupAlgorithmCallbacks();
+      // Check if start and end positions are set
+      const start = this.gridManager.getStartPosition();
+      const end = this.gridManager.getEndPosition();
+      console.log("Start position:", start);
+      console.log("End position:", end);
 
-        // Update state
-        this.isVisualizing = true;
-        StateManager.setVisualizationState({
-            isRunning: true,
-            isPaused: false,
-        });
+      if (!start || !end) {
+        throw new Error(
+          "Start and end positions must be set before running algorithm"
+        );
+      }
 
-        // Start the algorithm
-        // console.log(this.currentAlgorithm)
-        this.currentAlgorithm.begin();
-        console.log("Algorithm started");
+      this.currentAlgorithm = this.createAlgorithm(algorithmName);
+      console.log("Algorithm instance created");
 
-        // Start the visualization loop
-        this.startVisualizationLoop();
-        console.log("Visualization loop started");
+      // Set up algorithm callbacks
+      this.setupAlgorithmCallbacks();
 
-        console.log(`✅ Started ${algorithmName} visualization`);
+      // Update state
+      this.isVisualizing = true;
+      StateManager.setVisualizationState({
+        isRunning: true,
+        isPaused: false,
+      });
+
+      // Start the algorithm
+      // console.log(this.currentAlgorithm)
+      this.currentAlgorithm.begin();
+      console.log("Algorithm started");
+
+      // Start the visualization loop
+      this.startVisualizationLoop();
+      console.log("Visualization loop started");
+
+      console.log(`✅ Started ${algorithmName} visualization`);
     } catch (error) {
-        console.error("❌ Failed to start visualization:", error);
-        this.handleVisualizationError(error.message);
+      console.error("❌ Failed to start visualization:", error);
+      this.handleVisualizationError(error.message);
     }
-}
+  }
 
   setupAlgorithmCallbacks() {
     // Called on each algorithm step
@@ -212,8 +215,15 @@ startVisualization() {
   // Pause visualization
   pauseVisualization() {
     if (this.currentAlgorithm) {
+      // Stop the animation loop
+      if (this.visualizationTimer) {
+        cancelAnimationFrame(this.visualizationTimer);
+        this.visualizationTimer = null;
+      }
+
       this.currentAlgorithm.pause();
       StateManager.setVisualizationState({ isPaused: true });
+      this.isVisualizing = false; // Important: stop the visualization flag
       console.log("Visualization paused");
     }
   }
@@ -223,7 +233,8 @@ startVisualization() {
     if (this.currentAlgorithm && this.currentAlgorithm.isPaused) {
       this.currentAlgorithm.resume();
       StateManager.setVisualizationState({ isPaused: false });
-      this.startVisualizationLoop();
+      this.isVisualizing = true; // Reset the visualization flag
+      this.startVisualizationLoop(); // This will restart the animation
       console.log("Visualization resumed");
     }
   }
@@ -312,5 +323,46 @@ startVisualization() {
     return this.currentAlgorithm
       ? this.currentAlgorithm.getVisualizationState()
       : null;
+  }
+
+  // Update the showResults method
+  showResults(results) {
+    const stats = {
+      visited: results.visitedCount,
+      pathLength: results.pathLength,
+      steps: results.totalSteps,
+      executionTime: results.executionTime,
+      success: results.success,
+    };
+
+    const message = results.success ? "🎉 Path Found!" : "❌ No Path Found";
+
+    // Show toast with detailed stats (no auto-hide for completion)
+    UIManager.showToast(message, stats, 0); // 0 = no auto-hide
+
+    // Also update status bar
+    // UIManager.showStatusBar(
+    //   results.success ? "✅ Path Found!" : "❌ No Path Exists",
+    //   stats,
+    //   true
+    // );
+  }
+
+  // Update updateStatistics to track real-time stats
+  updateStatistics(visualizationState) {
+    const stats = {
+      steps: visualizationState.currentStep,
+      visited: visualizationState.visited.length,
+      pathLength: visualizationState.path.length,
+      frontierSize: visualizationState.frontier.length,
+    };
+
+    // Update status bar with live stats if algorithm is running
+    const vizState = StateManager.getVisualizationState();
+    if (vizState.isRunning && !vizState.isPaused) {
+      // UIManager.showStatusBar("🎯 Algorithm Running...", stats, false);
+    }
+
+    console.log("Algorithm Stats:", stats);
   }
 }

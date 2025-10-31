@@ -13,10 +13,18 @@
         <button>Clear Maze</button>
         <button>Random Maze</button>
         <button>Start Exploring</button>
-        <button id="toggle-options" class="sidebar-toggle" title="Toggle Options Panel">
+        <button
+          id="toggle-options"
+          class="sidebar-toggle"
+          title="Toggle Options Panel"
+        >
           <i class="fas fa-chevron-left"></i>
         </button>
-        <button id="toggle-info" class="sidebar-toggle" title="Toggle Info Panel">
+        <button
+          id="toggle-info"
+          class="sidebar-toggle"
+          title="Toggle Info Panel"
+        >
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>
@@ -49,7 +57,9 @@
               value="4"
             />
           </div>
-           <button id="apply-size" class="apply-size-btn">Apply Grid Size</button>
+          <button id="apply-size" class="apply-size-btn">
+            Apply Grid Size
+          </button>
         </div>
 
         <div class="maze-generation options-group-section">
@@ -101,9 +111,9 @@
               max="10"
               value="5"
             />
-            <button>Pause</button>
-            <button>Resume</button>
-            <button>Visualize</button>
+            <button data-control="pause">Pause</button>
+            <button data-control="resume">Resume</button>
+            <button data-control="visualize">Visualize</button>
           </div>
         </div>
       </section>
@@ -158,6 +168,24 @@
         </div>
       </section>
     </main>
+
+    <!-- Status Bar -->
+    <div id="status-bar" class="status-bar hidden">
+      <div class="status-content">
+        <span id="status-message"></span>
+        <div id="status-stats" class="status-stats"></div>
+      </div>
+      <button id="status-close" class="status-close">&times;</button>
+    </div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden">
+  <div class="toast-content">
+      <button id="toast-close" class="toast-close">&times;</button>
+      <span id="toast-message"></span>
+      <div id="toast-stats" class="toast-stats"></div>
+  </div>
+</div>
 
     <footer class="footer">Put Something Here Later</footer>
 

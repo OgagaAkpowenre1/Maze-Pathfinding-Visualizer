@@ -33,22 +33,22 @@ export class CanvasRenderer {
     };
   }
 
-  drawGrid() {
-    const { rows, columns } = this.gridManager.getDimensions();
+  // drawGrid() {
+  //   const { rows, columns } = this.gridManager.getDimensions();
 
-    //Clear canvas
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  //   //Clear canvas
+  //   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    //Draw each cell
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < columns; col++) {
-        this.drawCell(row, col);
-      }
-    }
+  //   //Draw each cell
+  //   for (let row = 0; row < rows; row++) {
+  //     for (let col = 0; col < columns; col++) {
+  //       this.drawCell(row, col);
+  //     }
+  //   }
 
-    // Draw algorithm visualization on top if active
-    this.drawAlgorithmOverlay();
-  }
+  //   // Draw algorithm visualization on top if active
+  //   this.drawAlgorithmOverlay();
+  // }
 
   drawCell(row, col) {
     const state = this.gridManager.getCell(row, col);
@@ -169,16 +169,40 @@ export class CanvasRenderer {
   }
 
   // Clear algorithm visualization
-  clearAlgorithmState() {
-    this.animationStates = {
-      visited: new Set(),
-      frontier: [],
-      path: [],
-      current: null,
-      isComplete: false,
-    };
-    this.drawGrid();
+ // In canvas/canvasRenderer.js - enhance clearAlgorithmState
+clearAlgorithmState() {
+  this.animationStates = {
+    visited: new Set(),
+    frontier: [],
+    path: [],
+    current: null,
+    isComplete: false,
+  };
+  
+  // Force a complete redraw of the base grid only
+  this.drawBaseGridOnly();
+}
+
+// Add this new method to draw only the base grid without any algorithm overlays
+drawBaseGridOnly() {
+  const { rows, columns } = this.gridManager.getDimensions();
+
+  // Clear the entire canvas
+  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+  // Draw only the base cells (no algorithm visualization)
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      this.drawCell(row, col);
+    }
   }
+}
+
+// Also update the drawGrid method to be more explicit
+drawGrid() {
+  this.drawBaseGridOnly();
+  this.drawAlgorithmOverlay();
+}
 
   // Method specifically for AlgorithmController to call
   drawAlgorithmState(algorithmState) {

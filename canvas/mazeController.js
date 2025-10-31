@@ -48,23 +48,14 @@ export class MazeController {
 //     // window.resumeVisualization = () => this.algorithmController.resumeVisualization();
 //     // window.stopVisualization = () => this.algorithmController.stopVisualization();
 //     // window.resetVisualization = () => this.algorithmController.resetVisualization();
-    
 // }
 
 setupAlgorithmEvents() {
-  // TEMPORARILY COMMENT OUT
   window.startVisualization = () => this.algorithmController.startVisualization();
   window.pauseVisualization = () => this.algorithmController.pauseVisualization();
   window.resumeVisualization = () => this.algorithmController.resumeVisualization();
   window.stopVisualization = () => this.algorithmController.stopVisualization();
   window.resetVisualization = () => this.algorithmController.resetVisualization();
-  
-  // Add placeholder functions
-  // window.startVisualization = () => console.log("Visualization disabled - fix imports first");
-  // window.pauseVisualization = () => console.log("Visualization disabled");
-  // window.resumeVisualization = () => console.log("Visualization disabled");
-  // window.stopVisualization = () => console.log("Visualization disabled");
-  // window.resetVisualization = () => console.log("Visualization disabled");
 }
 
   initializeCanvas() {
