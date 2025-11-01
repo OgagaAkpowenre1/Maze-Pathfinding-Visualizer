@@ -57,6 +57,20 @@
               value="4"
             />
           </div>
+
+          <!-- Add Trap Weight Control -->
+          <div class="maze-config-input">
+            <label for="trap-weight">Trap Weight</label>
+            <input
+              type="number"
+              name="trap-weight"
+              id="trap-weight"
+              min="1"
+              max="100"
+              value="5"
+            />
+          </div>
+          
           <button id="apply-size" class="apply-size-btn">
             Apply Grid Size
           </button>
@@ -178,14 +192,14 @@
       <button id="status-close" class="status-close">&times;</button>
     </div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast hidden">
-  <div class="toast-content">
-      <button id="toast-close" class="toast-close">&times;</button>
-      <span id="toast-message"></span>
-      <div id="toast-stats" class="toast-stats"></div>
-  </div>
-</div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+      <div class="toast-content">
+        <button id="toast-close" class="toast-close">&times;</button>
+        <span id="toast-message"></span>
+        <div id="toast-stats" class="toast-stats"></div>
+      </div>
+    </div>
 
     <footer class="footer">Put Something Here Later</footer>
 

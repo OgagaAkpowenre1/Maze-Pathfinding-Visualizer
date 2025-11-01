@@ -50,27 +50,32 @@ export class CanvasRenderer {
   //   this.drawAlgorithmOverlay();
   // }
 
-  drawCell(row, col) {
-    const state = this.gridManager.getCell(row, col);
-    const x = col * this.cellSize;
-    const y = row * this.cellSize;
+  // In canvas/canvasRenderer.js - update drawCell method
+drawCell(row, col) {
+  const state = this.gridManager.getCell(row, col);
+  const x = col * this.cellSize;
+  const y = row * this.cellSize;
 
-    //Fill cell with color
-    this.ctx.fillStyle = this.colors[state];
-    this.ctx.fillRect(x, y, this.cellSize, this.cellSize);
+  //Fill cell with color
+  this.ctx.fillStyle = this.colors[state];
+  this.ctx.fillRect(x, y, this.cellSize, this.cellSize);
 
-    //Draw grid lines
-    this.ctx.strokeStyle = "#bdc3c7";
-    this.ctx.lineWidth = 1;
-    this.ctx.strokeRect(x, y, this.cellSize, this.cellSize);
+  //Draw grid lines
+  this.ctx.strokeStyle = "#bdc3c7";
+  this.ctx.lineWidth = 1;
+  this.ctx.strokeRect(x, y, this.cellSize, this.cellSize);
 
-    // Add labels for start and end
-    if (state === CELL_STATES.START) {
-      this.drawCellLabel(x, y, "S", "#FFFFFF");
-    } else if (state === CELL_STATES.END) {
-      this.drawCellLabel(x, y, "E", "#FFFFFF");
-    }
+  // Add labels for start and end
+  if (state === CELL_STATES.START) {
+    this.drawCellLabel(x, y, "S", "#FFFFFF");
+  } else if (state === CELL_STATES.END) {
+    this.drawCellLabel(x, y, "E", "#FFFFFF");
+  } else if (state === CELL_STATES.TRAP) {
+    // Show trap weight
+    const trapWeight = this.gridManager.getCellWeightForDisplay(row, col);
+    this.drawCellLabel(x, y, trapWeight.toString(), "#FFFFFF");
   }
+}
 
   drawCellLabel(x, y, text, color) {
     this.ctx.fillStyle = color;

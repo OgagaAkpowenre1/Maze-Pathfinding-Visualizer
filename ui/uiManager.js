@@ -52,7 +52,17 @@ export const UIManager = {
   setupMazeConfigInputs() {
     const rowsInput = document.getElementById("rows");
     const columnsInput = document.getElementById("columns");
+    const trapWeightInput = document.getElementById("trap-weight"); // NEW
     const applyButton = document.getElementById("apply-size");
+
+    // Set initial trap weight value
+    trapWeightInput.value = StateManager.getTrapWeight();
+
+    // Trap weight change listener (immediate)
+    trapWeightInput.addEventListener("input", (e) => {
+      const weight = parseInt(e.target.value) || 5;
+      StateManager.setTrapWeight(weight);
+    });
 
     // ✅ FIX 3: Single apply button for better performance
     applyButton.addEventListener("click", () => {
@@ -87,21 +97,23 @@ export const UIManager = {
 
   // Add to ui/uiManager.js
   setupControlButtons() {
-    const controlButtons = document.querySelectorAll('.controls button[data-control]');
-    
-    controlButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
+    const controlButtons = document.querySelectorAll(
+      ".controls button[data-control]"
+    );
+
+    controlButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
         const controlType = e.target.dataset.control;
         console.log(`Controls button clicked: ${controlType}`);
-        
-        switch(controlType) {
-          case 'pause':
+
+        switch (controlType) {
+          case "pause":
             this.pauseVisualization();
             break;
-          case 'resume':
+          case "resume":
             this.resumeVisualization();
             break;
-          case 'visualize':
+          case "visualize":
             this.startVisualization();
             break;
           default:
@@ -221,16 +233,16 @@ export const UIManager = {
       case "clearMaze":
         console.log("Clearing maze...");
         this.clearCompletionToast();
-      if (window.resetVisualization) {
-        window.resetVisualization(); // Clear algorithm visualization first
-      }
-      if (this.gridManager && this.mazeController) {
-        this.gridManager.clearGrid();
-        this.mazeController.redraw();
-      } else {
-        console.error("GridManager or MazeController not available");
-      }
-      break;
+        if (window.resetVisualization) {
+          window.resetVisualization(); // Clear algorithm visualization first
+        }
+        if (this.gridManager && this.mazeController) {
+          this.gridManager.clearGrid();
+          this.mazeController.redraw();
+        } else {
+          console.error("GridManager or MazeController not available");
+        }
+        break;
       case "randomMaze":
         console.log("Generating random maze...");
         // TODO: Implement random maze generation
@@ -279,190 +291,192 @@ export const UIManager = {
     }
   },
 
-   // Notification System
-   showStatusBar(message, stats = null, closable = true) {
-    const statusBar = document.getElementById('status-bar');
-    const statusMessage = document.getElementById('status-message');
-    const statusStats = document.getElementById('status-stats');
-    
+  // Notification System
+  showStatusBar(message, stats = null, closable = true) {
+    const statusBar = document.getElementById("status-bar");
+    const statusMessage = document.getElementById("status-message");
+    const statusStats = document.getElementById("status-stats");
+
     statusMessage.textContent = message;
-    
+
     if (stats) {
-        statusStats.innerHTML = this.formatStats(stats);
+      statusStats.innerHTML = this.formatStats(stats);
     } else {
-        statusStats.innerHTML = '';
+      statusStats.innerHTML = "";
     }
-    
-    statusBar.classList.remove('hidden');
-    
+
+    statusBar.classList.remove("hidden");
+
     // Setup close button
-    const closeBtn = document.getElementById('status-close');
+    const closeBtn = document.getElementById("status-close");
     if (closable) {
-        closeBtn.style.display = 'block';
-        closeBtn.onclick = () => this.hideStatusBar();
+      closeBtn.style.display = "block";
+      closeBtn.onclick = () => this.hideStatusBar();
     } else {
-        closeBtn.style.display = 'none';
+      closeBtn.style.display = "none";
     }
-},
+  },
 
-hideStatusBar() {
-    const statusBar = document.getElementById('status-bar');
-    statusBar.classList.add('hidden');
-},
+  hideStatusBar() {
+    const statusBar = document.getElementById("status-bar");
+    statusBar.classList.add("hidden");
+  },
 
-showToast(message, stats = null, duration = 3000) {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
-    const toastStats = document.getElementById('toast-stats');
-    
+  showToast(message, stats = null, duration = 3000) {
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
+    const toastStats = document.getElementById("toast-stats");
+
     toastMessage.textContent = message;
-    
+
     if (stats) {
-        toastStats.innerHTML = this.formatStats(stats, 'toast-stat');
+      toastStats.innerHTML = this.formatStats(stats, "toast-stat");
     } else {
-        toastStats.innerHTML = '';
+      toastStats.innerHTML = "";
     }
-    
-    toast.classList.remove('hidden');
-    
+
+    toast.classList.remove("hidden");
+
     // Auto-hide after duration
     if (duration > 0) {
-        setTimeout(() => {
-            this.hideToast();
-        }, duration);
-    }
-},
-
-// In ui/uiManager.js - update showToast and related methods
-showToast(message, stats = null, duration = 3000) {
-  const toast = document.getElementById('toast');
-  const toastMessage = document.getElementById('toast-message');
-  const toastStats = document.getElementById('toast-stats');
-  const toastClose = document.getElementById('toast-close');
-  
-  toastMessage.textContent = message;
-  
-  if (stats) {
-      toastStats.innerHTML = this.formatStats(stats, 'toast-stat');
-  } else {
-      toastStats.innerHTML = '';
-  }
-  
-  toast.classList.remove('hidden');
-  
-  // Setup close button
-  toastClose.onclick = () => {
-      this.hideToast();
-  };
-  
-  // Auto-hide after duration (only if duration > 0)
-  if (duration > 0) {
       setTimeout(() => {
-          this.hideToast();
+        this.hideToast();
       }, duration);
-  }
-},
+    }
+  },
 
-hideToast() {
-  const toast = document.getElementById('toast');
-  toast.classList.add('hidden');
-},
+  // In ui/uiManager.js - update showToast and related methods
+  showToast(message, stats = null, duration = 3000) {
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
+    const toastStats = document.getElementById("toast-stats");
+    const toastClose = document.getElementById("toast-close");
 
-// Add method to automatically hide toast when new visualization starts
-clearCompletionToast() {
-  // Only hide completion toasts (ones with stats), not temporary ones
-  const toast = document.getElementById('toast');
-  const toastStats = document.getElementById('toast-stats');
-  
-  if (!toast.classList.contains('hidden') && toastStats.innerHTML !== '') {
+    toastMessage.textContent = message;
+
+    if (stats) {
+      toastStats.innerHTML = this.formatStats(stats, "toast-stat");
+    } else {
+      toastStats.innerHTML = "";
+    }
+
+    toast.classList.remove("hidden");
+
+    // Setup close button
+    toastClose.onclick = () => {
       this.hideToast();
-  }
-},
+    };
 
-formatStats(stats, statClass = 'stat-item') {
-    let html = '';
-    
+    // Auto-hide after duration (only if duration > 0)
+    if (duration > 0) {
+      setTimeout(() => {
+        this.hideToast();
+      }, duration);
+    }
+  },
+
+  hideToast() {
+    const toast = document.getElementById("toast");
+    toast.classList.add("hidden");
+  },
+
+  // Add method to automatically hide toast when new visualization starts
+  clearCompletionToast() {
+    // Only hide completion toasts (ones with stats), not temporary ones
+    const toast = document.getElementById("toast");
+    const toastStats = document.getElementById("toast-stats");
+
+    if (!toast.classList.contains("hidden") && toastStats.innerHTML !== "") {
+      this.hideToast();
+    }
+  },
+
+  formatStats(stats, statClass = "stat-item") {
+    let html = "";
+
     if (stats.visited !== undefined) {
-        html += `<div class="${statClass}">👁️ Visited: ${stats.visited}</div>`;
+      html += `<div class="${statClass}">👁️ Visited: ${stats.visited}</div>`;
     }
     if (stats.pathLength !== undefined) {
-        html += `<div class="${statClass}">🛤️ Path: ${stats.pathLength}</div>`;
+      html += `<div class="${statClass}">🛤️ Path: ${stats.pathLength}</div>`;
     }
     if (stats.steps !== undefined) {
-        html += `<div class="${statClass}">⚡ Steps: ${stats.steps}</div>`;
+      html += `<div class="${statClass}">⚡ Steps: ${stats.steps}</div>`;
     }
     if (stats.frontierSize !== undefined) {
-        html += `<div class="${statClass}">🔍 Frontier: ${stats.frontierSize}</div>`;
+      html += `<div class="${statClass}">🔍 Frontier: ${stats.frontierSize}</div>`;
     }
     if (stats.executionTime !== undefined) {
-        html += `<div class="${statClass}">⏱️ Time: ${stats.executionTime.toFixed(2)}ms</div>`;
+      html += `<div class="${statClass}">⏱️ Time: ${stats.executionTime.toFixed(
+        2
+      )}ms</div>`;
     }
-    
+
     return html;
-},
+  },
 
-showPauseOverlay() {
-    const canvasSection = document.querySelector('.canvas');
-    let overlay = canvasSection.querySelector('.canvas-overlay');
-    
+  showPauseOverlay() {
+    const canvasSection = document.querySelector(".canvas");
+    let overlay = canvasSection.querySelector(".canvas-overlay");
+
     if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'canvas-overlay';
-        overlay.innerHTML = '⏸️ PAUSED';
-        canvasSection.appendChild(overlay);
+      overlay = document.createElement("div");
+      overlay.className = "canvas-overlay";
+      overlay.innerHTML = "⏸️ PAUSED";
+      canvasSection.appendChild(overlay);
     }
-    
+
     setTimeout(() => {
-        overlay.classList.add('visible');
+      overlay.classList.add("visible");
     }, 10);
-},
+  },
 
-hidePauseOverlay() {
-    const overlay = document.querySelector('.canvas-overlay');
+  hidePauseOverlay() {
+    const overlay = document.querySelector(".canvas-overlay");
     if (overlay) {
-        overlay.classList.remove('visible');
-        // Remove after transition
-        setTimeout(() => {
-            if (overlay.parentNode) {
-                overlay.parentNode.removeChild(overlay);
-            }
-        }, 300);
+      overlay.classList.remove("visible");
+      // Remove after transition
+      setTimeout(() => {
+        if (overlay.parentNode) {
+          overlay.parentNode.removeChild(overlay);
+        }
+      }, 300);
     }
-},
+  },
 
-// Enhanced visualization control methods
-pauseVisualization() {
+  // Enhanced visualization control methods
+  pauseVisualization() {
     if (window.pauseVisualization) {
-        window.pauseVisualization();
-        // this.showStatusBar('⏸️ Visualization Paused', null, true);
-        this.clearCompletionToast();
-        this.showPauseOverlay();
-        this.showToast('Paused', null, 1500);
+      window.pauseVisualization();
+      // this.showStatusBar('⏸️ Visualization Paused', null, true);
+      this.clearCompletionToast();
+      this.showPauseOverlay();
+      this.showToast("Paused", null, 1500);
     }
-},
+  },
 
-resumeVisualization() {
+  resumeVisualization() {
     if (window.resumeVisualization) {
-        window.resumeVisualization();
-        // this.hideStatusBar();
-        this.clearCompletionToast();
-        this.hidePauseOverlay();
-        this.showToast('Resumed', null, 1500);
+      window.resumeVisualization();
+      // this.hideStatusBar();
+      this.clearCompletionToast();
+      this.hidePauseOverlay();
+      this.showToast("Resumed", null, 1500);
     }
-},
+  },
 
-// Update the existing startVisualization to clear old toasts
-startVisualization() {
-  console.log("UIManager: startVisualization called");
-  
-  // Clear any existing completion toast
-  this.clearCompletionToast();
-  
-  if (window.startVisualization) {
+  // Update the existing startVisualization to clear old toasts
+  startVisualization() {
+    console.log("UIManager: startVisualization called");
+
+    // Clear any existing completion toast
+    this.clearCompletionToast();
+
+    if (window.startVisualization) {
       // this.showStatusBar('🎯 Algorithm Running...', null, false);
       window.startVisualization();
-  } else {
+    } else {
       console.error("❌ AlgorithmController not initialized");
-  }
-}
+    }
+  },
 };
