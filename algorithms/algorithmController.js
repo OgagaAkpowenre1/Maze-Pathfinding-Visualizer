@@ -4,7 +4,7 @@ import { UIManager } from "../ui/uiManager.js";
 import BFS from "./BFS.js";
 import DFS from './DFS.js';
 import Dijkstra from './Dijkstra.js';
-// import AStar from './AStar.js';
+import AStar from './AStar.js';
 
 export class AlgorithmController {
   constructor(gridManager, canvasRenderer) {
@@ -51,8 +51,8 @@ export class AlgorithmController {
           return new DFS(this.gridManager);
       case 'DIJKSTRA':
           return new Dijkstra(this.gridManager);
-      // case 'AStar':
-      //     return new AStar(this.gridManager);
+      case 'ASTAR':
+          return new AStar(this.gridManager);
       default:
         throw new Error(`Unknown algorithm: ${algorithmName}`);
     }
