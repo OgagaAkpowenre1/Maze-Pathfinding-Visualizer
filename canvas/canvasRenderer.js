@@ -51,31 +51,31 @@ export class CanvasRenderer {
   // }
 
   // In canvas/canvasRenderer.js - update drawCell method
-drawCell(row, col) {
-  const state = this.gridManager.getCell(row, col);
-  const x = col * this.cellSize;
-  const y = row * this.cellSize;
+  drawCell(row, col) {
+    const state = this.gridManager.getCell(row, col);
+    const x = col * this.cellSize;
+    const y = row * this.cellSize;
 
-  //Fill cell with color
-  this.ctx.fillStyle = this.colors[state];
-  this.ctx.fillRect(x, y, this.cellSize, this.cellSize);
+    //Fill cell with color
+    this.ctx.fillStyle = this.colors[state];
+    this.ctx.fillRect(x, y, this.cellSize, this.cellSize);
 
-  //Draw grid lines
-  this.ctx.strokeStyle = "#bdc3c7";
-  this.ctx.lineWidth = 1;
-  this.ctx.strokeRect(x, y, this.cellSize, this.cellSize);
+    //Draw grid lines
+    this.ctx.strokeStyle = "#bdc3c7";
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeRect(x, y, this.cellSize, this.cellSize);
 
-  // Add labels for start and end
-  if (state === CELL_STATES.START) {
-    this.drawCellLabel(x, y, "S", "#FFFFFF");
-  } else if (state === CELL_STATES.END) {
-    this.drawCellLabel(x, y, "E", "#FFFFFF");
-  } else if (state === CELL_STATES.TRAP) {
-    // Show trap weight
-    const trapWeight = this.gridManager.getCellWeightForDisplay(row, col);
-    this.drawCellLabel(x, y, trapWeight.toString(), "#FFFFFF");
+    // Add labels for start and end
+    if (state === CELL_STATES.START) {
+      this.drawCellLabel(x, y, "S", "#FFFFFF");
+    } else if (state === CELL_STATES.END) {
+      this.drawCellLabel(x, y, "E", "#FFFFFF");
+    } else if (state === CELL_STATES.TRAP) {
+      // Show the actual weight for THIS trap
+      const trapWeight = this.gridManager.getCellWeight(row, col);
+      this.drawCellLabel(x, y, trapWeight.toString(), "#FFFFFF");
+    }
   }
-}
 
   drawCellLabel(x, y, text, color) {
     this.ctx.fillStyle = color;
@@ -174,40 +174,40 @@ drawCell(row, col) {
   }
 
   // Clear algorithm visualization
- // In canvas/canvasRenderer.js - enhance clearAlgorithmState
-clearAlgorithmState() {
-  this.animationStates = {
-    visited: new Set(),
-    frontier: [],
-    path: [],
-    current: null,
-    isComplete: false,
-  };
-  
-  // Force a complete redraw of the base grid only
-  this.drawBaseGridOnly();
-}
+  // In canvas/canvasRenderer.js - enhance clearAlgorithmState
+  clearAlgorithmState() {
+    this.animationStates = {
+      visited: new Set(),
+      frontier: [],
+      path: [],
+      current: null,
+      isComplete: false,
+    };
 
-// Add this new method to draw only the base grid without any algorithm overlays
-drawBaseGridOnly() {
-  const { rows, columns } = this.gridManager.getDimensions();
+    // Force a complete redraw of the base grid only
+    this.drawBaseGridOnly();
+  }
 
-  // Clear the entire canvas
-  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  // Add this new method to draw only the base grid without any algorithm overlays
+  drawBaseGridOnly() {
+    const { rows, columns } = this.gridManager.getDimensions();
 
-  // Draw only the base cells (no algorithm visualization)
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < columns; col++) {
-      this.drawCell(row, col);
+    // Clear the entire canvas
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Draw only the base cells (no algorithm visualization)
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < columns; col++) {
+        this.drawCell(row, col);
+      }
     }
   }
-}
 
-// Also update the drawGrid method to be more explicit
-drawGrid() {
-  this.drawBaseGridOnly();
-  this.drawAlgorithmOverlay();
-}
+  // Also update the drawGrid method to be more explicit
+  drawGrid() {
+    this.drawBaseGridOnly();
+    this.drawAlgorithmOverlay();
+  }
 
   // Method specifically for AlgorithmController to call
   drawAlgorithmState(algorithmState) {

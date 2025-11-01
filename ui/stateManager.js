@@ -60,13 +60,17 @@ export const StateManager = {
     this._toolChangeCallbacks.forEach((callback) => callback(tool));
   },
 
+  // Update the weight methods in StateManager:
   getTrapWeight() {
-    return AppState.weights.trapWeight;
+    const gridManager = this.getGridManager();
+    return gridManager ? gridManager.getCurrentTrapWeight() : 5;
   },
-  
+
   setTrapWeight(weight) {
-    AppState.weights.trapWeight = Math.max(1, Math.min(100, weight)); // Limit between 1-100
-    // You could add a callback here if needed
+    const gridManager = this.getGridManager();
+    if (gridManager) {
+      gridManager.setCurrentTrapWeight(weight);
+    }
   },
 
   getVisualizationState() {

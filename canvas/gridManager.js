@@ -13,8 +13,10 @@ class GridManager {
     this.startPosition = null;
     this.endPosition = null;
     this.grid = [];
+    this.cellWeights = new Map(); // NEW: Store weights per cell
     this.rows = rows;
     this.columns = columns;
+    this.currentTrapWeight = 5; // Default weight for new traps
 
     this.initializeGrid();
   }
@@ -34,6 +36,15 @@ class GridManager {
 
   isValidPosition(row, col) {
     return row >= 0 && row < this.rows && col >= 0 && col < this.columns;
+  }
+
+  // Add method to set current trap weight for NEW traps
+  setCurrentTrapWeight(weight) {
+    this.currentTrapWeight = Math.max(1, Math.min(100, weight));
+  }
+
+  getCurrentTrapWeight() {
+    return this.currentTrapWeight;
   }
 
   getCell(row, col) {
@@ -74,6 +85,19 @@ class GridManager {
       this.endPosition = { row, col };
     }
 
+    // If we're changing a cell to TRAP, set its weight
+    if (newState === CELL_STATES.TRAP) {
+      const cellKey = this.cellToString(row, col);
+      this.cellWeights.set(cellKey, this.currentTrapWeight);
+    } else if (
+      currentState === CELL_STATES.TRAP &&
+      newState !== CELL_STATES.TRAP
+    ) {
+      // If we're removing a trap, remove its weight
+      const cellKey = this.cellToString(row, col);
+      this.cellWeights.delete(cellKey);
+    }
+
     // If we're changing a START cell to something else, clear startPosition
     if (currentState === CELL_STATES.START && newState !== CELL_STATES.START) {
       this.startPosition = null;
@@ -110,6 +134,7 @@ class GridManager {
   // Reset entire grid to empty
   clearGrid() {
     this.initializeGrid();
+    this.cellWeights.clear();
   }
 
   // Resize grid (useful when user changes dimensions)
@@ -118,23 +143,31 @@ class GridManager {
     this.rows = newRows;
     this.columns = newColumns;
     this.initializeGrid();
+    this.cellWeights.clear();
   }
 
   // In canvas/gridManager.js - add these methods
+  // Update getCellWeight to use individual cell weights
   getCellWeight(row, col) {
     const state = this.getCell(row, col);
+    const cellKey = this.cellToString(row, col);
 
     switch (state) {
       case CELL_STATES.WALL:
         return Infinity; // Impassable
       case CELL_STATES.TRAP:
-        return StateManager.getTrapWeight(); // Use the configured trap weight
+        return this.cellWeights.get(cellKey) || this.currentTrapWeight; // Use stored weight or current default
       case CELL_STATES.START:
       case CELL_STATES.END:
       case CELL_STATES.EMPTY:
       default:
         return 1; // Normal movement cost
     }
+  }
+
+  // Helper method to convert cell to string key
+  cellToString(row, col) {
+    return `${row},${col}`;
   }
 
   // Optional: Get weight for display purposes

@@ -37,17 +37,77 @@ export const UIManager = {
     });
   },
 
-  setupToolButtons() {
-    const toolButtons = document.querySelectorAll(".design-tools");
+  // setupToolButtons() {
+  //   const toolButtons = document.querySelectorAll(".design-tools");
 
-    toolButtons.forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const tool = e.target.textContent.toLowerCase();
+  //   toolButtons.forEach((button) => {
+  //     button.addEventListener("click", (e) => {
+  //       const tool = e.target.textContent.toLowerCase();
+  //       StateManager.setActiveTool(tool);
+  //       this.highlightActiveTool(tool);
+  //     });
+  //   });
+  // },
+
+  // In ui/uiManager.js - add a weight update tool
+setupToolButtons() {
+  const toolButtons = document.querySelectorAll(".design-tools");
+
+  toolButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const tool = e.target.textContent.toLowerCase();
+      
+      if (tool === "update-weight") {
+        // Special tool to update weights of existing traps
+        this.activateWeightUpdateTool();
+      } else {
         StateManager.setActiveTool(tool);
         this.highlightActiveTool(tool);
-      });
+      }
     });
-  },
+  });
+},
+
+activateWeightUpdateTool() {
+  const currentWeight = StateManager.getTrapWeight();
+  const newWeight = prompt(`Update all existing traps to weight:`, currentWeight);
+  
+  if (newWeight !== null) {
+    const weight = parseInt(newWeight);
+    if (!isNaN(weight) && weight >= 1 && weight <= 100) {
+      // Update all existing traps to new weight
+      this.updateAllTrapWeights(weight);
+      StateManager.setTrapWeight(weight); // Also update for new traps
+    } else {
+      alert("Please enter a valid weight between 1 and 100");
+    }
+  }
+},
+
+updateAllTrapWeights(newWeight) {
+  const gridManager = StateManager.getGridManager();
+  if (!gridManager) return;
+
+  const { rows, columns } = gridManager.getDimensions();
+  let updatedCount = 0;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      if (gridManager.getCell(row, col) === CELL_STATES.TRAP) {
+        const cellKey = gridManager.cellToString(row, col);
+        gridManager.cellWeights.set(cellKey, newWeight);
+        updatedCount++;
+      }
+    }
+  }
+
+  console.log(`Updated ${updatedCount} traps to weight ${newWeight}`);
+  
+  // Redraw to show updated weights
+  if (window.mazeController) {
+    window.mazeController.redraw();
+  }
+},
 
   setupMazeConfigInputs() {
     const rowsInput = document.getElementById("rows");
@@ -62,6 +122,9 @@ export const UIManager = {
     trapWeightInput.addEventListener("input", (e) => {
       const weight = parseInt(e.target.value) || 5;
       StateManager.setTrapWeight(weight);
+
+      // Optional: Show a tooltip or status message
+    console.log(`Trap weight set to ${weight}. New traps will use this weight.`);
     });
 
     // ✅ FIX 3: Single apply button for better performance
