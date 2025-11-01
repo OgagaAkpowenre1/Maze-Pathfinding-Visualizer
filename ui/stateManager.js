@@ -12,6 +12,9 @@ export const AppState = {
     startPosition: null,
     endPosition: null,
   },
+  weights: {
+    trapWeight: 5, // Default trap weight
+  },
   visualization: {
     isRunning: false,
     speed: 5,
@@ -55,6 +58,15 @@ export const StateManager = {
   setActiveTool(tool) {
     AppState.tools.activeTool = tool;
     this._toolChangeCallbacks.forEach((callback) => callback(tool));
+  },
+
+  getTrapWeight() {
+    return AppState.weights.trapWeight;
+  },
+  
+  setTrapWeight(weight) {
+    AppState.weights.trapWeight = Math.max(1, Math.min(100, weight)); // Limit between 1-100
+    // You could add a callback here if needed
   },
 
   getVisualizationState() {

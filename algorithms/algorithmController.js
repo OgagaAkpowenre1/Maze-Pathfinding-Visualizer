@@ -2,9 +2,8 @@
 import { StateManager } from "../ui/stateManager.js";
 import { UIManager } from "../ui/uiManager.js";
 import BFS from "./BFS.js";
-// We'll import other algorithms as we implement them
-// import DFS from './DFS.js';
-// import Dijkstra from './Dijkstra.js';
+import DFS from './DFS.js';
+import Dijkstra from './Dijkstra.js';
 // import AStar from './AStar.js';
 
 export class AlgorithmController {
@@ -48,10 +47,10 @@ export class AlgorithmController {
     switch (algorithmName) {
       case "BFS":
         return new BFS(this.gridManager);
-      // case 'DFS':
-      //     return new DFS(this.gridManager);
-      // case 'Dijkstra':
-      //     return new Dijkstra(this.gridManager);
+      case 'DFS':
+          return new DFS(this.gridManager);
+      case 'DIJKSTRA':
+          return new Dijkstra(this.gridManager);
       // case 'AStar':
       //     return new AStar(this.gridManager);
       default:
