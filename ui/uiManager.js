@@ -3,6 +3,7 @@
 import { AlgorithmInfo } from "../algorithms/algorithmInfo.js";
 import { AlgorithmData } from "../algorithms/algorithmData.js";
 import { StateManager } from "./stateManager.js";
+import { CELL_STATES } from "../canvas/cellStates.js";
 
 export const UIManager = {
   init() {
@@ -37,19 +38,6 @@ export const UIManager = {
     });
   },
 
-  // setupToolButtons() {
-  //   const toolButtons = document.querySelectorAll(".design-tools");
-
-  //   toolButtons.forEach((button) => {
-  //     button.addEventListener("click", (e) => {
-  //       const tool = e.target.textContent.toLowerCase();
-  //       StateManager.setActiveTool(tool);
-  //       this.highlightActiveTool(tool);
-  //     });
-  //   });
-  // },
-
-  // In ui/uiManager.js - add a weight update tool
 setupToolButtons() {
   const toolButtons = document.querySelectorAll(".design-tools");
 
@@ -299,16 +287,19 @@ updateAllTrapWeights(newWeight) {
         if (window.resetVisualization) {
           window.resetVisualization(); // Clear algorithm visualization first
         }
-        if (this.gridManager && this.mazeController) {
-          this.gridManager.clearGrid();
-          this.mazeController.redraw();
+        const gridManager = StateManager.getGridManager();
+        const mazeController = StateManager.getMazeController(); // Use StateManager
+        
+        if (gridManager && mazeController) {
+          gridManager.clearGrid();
+          mazeController.redraw();
         } else {
           console.error("GridManager or MazeController not available");
         }
         break;
       case "randomMaze":
         console.log("Generating random maze...");
-        // TODO: Implement random maze generation
+        this.showMazeTypeSelector();
         break;
       case "startVisualization":
         console.log("Starting visualization from UI...");
@@ -542,4 +533,239 @@ updateAllTrapWeights(newWeight) {
       console.error("❌ AlgorithmController not initialized");
     }
   },
+
+  // Add to ui/uiManager.js - Random Maze Generation
+generateRandomMaze(type = "walls") {
+  const gridManager = StateManager.getGridManager();
+  const mazeController = StateManager.getMazeController();
+  if (!gridManager ) {
+      console.error("GridManager not available");
+      return;
+  }
+
+  if (!mazeController) {
+    console.error("MazeController not available");
+    return;
+}
+
+  // Clear any existing visualization
+  if (window.resetVisualization) {
+      window.resetVisualization();
+  }
+
+  // Clear completion toast
+  this.clearCompletionToast();
+
+  console.log(`Generating ${type} random maze...`);
+
+  const { rows, columns } = gridManager.getDimensions();
+  
+  switch(type) {
+      case "walls":
+          this.generateRandomWalls(gridManager, rows, columns);
+          break;
+      case "traps":
+          this.generateRandomTraps(gridManager, rows, columns);
+          break;
+      case "perfect":
+          this.generatePerfectMaze(gridManager, rows, columns);
+          break;
+      case "obstacles":
+          this.generateRandomObstacles(gridManager, rows, columns);
+          break;
+      default:
+          this.generateRandomWalls(gridManager, rows, columns);
+  }
+
+  // Redraw the maze
+  mazeController.redraw();
+  this.showToast(`Generated ${type} maze`, null, 2000);
+},
+
+generateRandomWalls(gridManager, rows, columns) {
+  // Clear the grid but keep start and end positions
+  const start = gridManager.getStartPosition();
+  const end = gridManager.getEndPosition();
+  
+  gridManager.clearGrid();
+  
+  // Restore start and end if they existed
+  if (start) gridManager.setCell(start.row, start.col, CELL_STATES.START);
+  if (end) gridManager.setCell(end.row, end.col, CELL_STATES.END);
+  
+  // Generate random walls (25% density)
+  for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < columns; col++) {
+          // Skip start and end positions
+          if ((start && row === start.row && col === start.col) || 
+              (end && row === end.row && col === end.col)) {
+              continue;
+          }
+          
+          // 25% chance to place a wall
+          if (Math.random() < 0.25) {
+              gridManager.setCell(row, col, CELL_STATES.WALL);
+          }
+      }
+  }
+},
+
+generateRandomTraps(gridManager, rows, columns) {
+  // Clear the grid but keep start and end positions
+  const start = gridManager.getStartPosition();
+  const end = gridManager.getEndPosition();
+  
+  gridManager.clearGrid();
+  
+  // Restore start and end if they existed
+  if (start) gridManager.setCell(start.row, start.col, CELL_STATES.START);
+  if (end) gridManager.setCell(end.row, end.col, CELL_STATES.END);
+  
+  // Generate random traps (20% density) with random weights
+  for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < columns; col++) {
+          // Skip start and end positions
+          if ((start && row === start.row && col === start.col) || 
+              (end && row === end.row && col === end.col)) {
+              continue;
+          }
+          
+          // 20% chance to place a trap
+          if (Math.random() < 0.20) {
+              gridManager.setCell(row, col, CELL_STATES.TRAP);
+              // Set random weight between 3-15
+              const randomWeight = Math.floor(Math.random() * 13) + 3;
+              const cellKey = gridManager.cellToString(row, col);
+              gridManager.cellWeights.set(cellKey, randomWeight);
+          }
+      }
+  }
+},
+
+generateRandomObstacles(gridManager, rows, columns) {
+  // Clear the grid but keep start and end positions
+  const start = gridManager.getStartPosition();
+  const end = gridManager.getEndPosition();
+  
+  gridManager.clearGrid();
+  
+  // Restore start and end if they existed
+  if (start) gridManager.setCell(start.row, start.col, CELL_STATES.START);
+  if (end) gridManager.setCell(end.row, end.col, CELL_STATES.END);
+  
+  // Generate mixed obstacles (30% density total)
+  for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < columns; col++) {
+          // Skip start and end positions
+          if ((start && row === start.row && col === start.col) || 
+              (end && row === end.row && col === end.col)) {
+              continue;
+          }
+          
+          const rand = Math.random();
+          if (rand < 0.15) {
+              // 15% walls
+              gridManager.setCell(row, col, CELL_STATES.WALL);
+          } else if (rand < 0.30) {
+              // 15% traps with random weights
+              gridManager.setCell(row, col, CELL_STATES.TRAP);
+              const randomWeight = Math.floor(Math.random() * 18) + 3; // 3-20
+              const cellKey = gridManager.cellToString(row, col);
+              gridManager.cellWeights.set(cellKey, randomWeight);
+          }
+          // 70% remain empty
+      }
+  }
+},
+
+// Simple perfect maze generator using DFS
+generatePerfectMaze(gridManager, rows, columns) {
+  // Clear everything
+  gridManager.clearGrid();
+  
+  // Initialize all cells as walls
+  for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < columns; col++) {
+          gridManager.setCell(row, col, CELL_STATES.WALL);
+      }
+  }
+  
+  // DFS maze generation
+  const stack = [];
+  const startRow = 1;
+  const startCol = 1;
+  
+  // Start with a cell and mark it as empty
+  gridManager.setCell(startRow, startCol, CELL_STATES.EMPTY);
+  stack.push({row: startRow, col: startCol});
+  
+  while (stack.length > 0) {
+      const current = stack[stack.length - 1];
+      const neighbors = this.getUnvisitedNeighbors(current.row, current.col, gridManager, rows, columns);
+      
+      if (neighbors.length > 0) {
+          const randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
+          // Remove wall between current and neighbor
+          const wallRow = current.row + (randomNeighbor.row - current.row) / 2;
+          const wallCol = current.col + (randomNeighbor.col - current.col) / 2;
+          
+          gridManager.setCell(wallRow, wallCol, CELL_STATES.EMPTY);
+          gridManager.setCell(randomNeighbor.row, randomNeighbor.col, CELL_STATES.EMPTY);
+          
+          stack.push(randomNeighbor);
+      } else {
+          stack.pop();
+      }
+  }
+  
+  // Set start and end positions
+  gridManager.setCell(1, 1, CELL_STATES.START);
+  gridManager.setCell(rows - 2, columns - 2, CELL_STATES.END);
+},
+
+getUnvisitedNeighbors(row, col, gridManager, rows, columns) {
+  const neighbors = [];
+  const directions = [
+      {row: -2, col: 0}, {row: 2, col: 0}, 
+      {row: 0, col: -2}, {row: 0, col: 2}
+  ];
+  
+  for (const dir of directions) {
+      const newRow = row + dir.row;
+      const newCol = col + dir.col;
+      
+      if (newRow > 0 && newRow < rows - 1 && 
+          newCol > 0 && newCol < columns - 1 &&
+          gridManager.getCell(newRow, newCol) === CELL_STATES.WALL) {
+          neighbors.push({row: newRow, col: newCol});
+      }
+  }
+  
+  return neighbors;
+},
+
+// Show maze type selection
+showMazeTypeSelector() {
+  const mazeType = prompt(
+      "Choose maze type:\n\n" +
+      "1. walls - Random walls (25% density)\n" +
+      "2. traps - Random traps with varying weights\n" + 
+      "3. obstacles - Mixed walls and traps\n" +
+      "4. perfect - Perfect maze (no cycles)\n\n" +
+      "Enter 1-4 or the type name:",
+      "1"
+  );
+  
+  if (mazeType !== null) {
+      let type;
+      switch(mazeType.toLowerCase()) {
+          case "1": case "walls": type = "walls"; break;
+          case "2": case "traps": type = "traps"; break;
+          case "3": case "obstacles": type = "obstacles"; break;
+          case "4": case "perfect": type = "perfect"; break;
+          default: type = "walls";
+      }
+      this.generateRandomMaze(type);
+  }
+},
 };

@@ -156,4 +156,12 @@ export const StateManager = {
   onSidebarStateChange(callback) {
     this._sidebarStateCallbacks.push(callback);
   },
+
+  setMazeController(mazeController) {
+    AppState.mazeController = mazeController;
+  },
+
+  getMazeController() {
+    return AppState.mazeController;
+  },
 };

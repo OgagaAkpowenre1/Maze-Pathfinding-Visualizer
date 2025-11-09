@@ -5,8 +5,11 @@ import { StateManager } from "./ui/stateManager.js";
 import { UIManager } from "./ui/uiManager.js";
 import { MazeController } from "./canvas/mazeController.js";
 
+const PRODUCTION_MODE = true;
+
 // Enhanced debug function with file and line information
 export function debug(...args) {
+  if (PRODUCTION_MODE) return;
   // Get stack trace to find caller information
   const stack = new Error().stack;
   let callerInfo = "unknown";
@@ -111,6 +114,7 @@ export function debug(...args) {
 
 // Error-catching version that shows where errors occur
 export function debugError(context, error) {
+  if (PRODUCTION_MODE) return;
   debug(`❌ ERROR in ${context}:`, error.message || error);
   debug("Stack trace:", error.stack);
 }
@@ -159,6 +163,9 @@ document.addEventListener("DOMContentLoaded", function () {
       StateManager
     );
 
+    // Store in StateManager instead of window
+    StateManager.setMazeController(mazeController);
+
     // Initialize UI Manager
     debug("Initializing UI Manager...");
     UIManager.init();
@@ -198,41 +205,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
     debug("🎉 Application fully initialized and working!");
 
-
     // Add this at the end of script.js for testing
-window.testBFS = function() {
-  console.log("Testing BFS manually...");
-  const gridManager = StateManager.getGridManager();
-  const start = gridManager.getStartPosition();
-  const end = gridManager.getEndPosition();
-  
-  console.log("GridManager:", gridManager);
-  console.log("Start:", start);
-  console.log("End:", end);
-  
-  if (!start || !end) {
-      console.error("Need start and end positions");
-      return;
-  }
-  
-  try {
-      const bfs = new BFS(gridManager);
-      console.log("BFS created successfully:", bfs);
-      console.log("BFS methods:", {
+    window.testBFS = function () {
+      console.log("Testing BFS manually...");
+      const gridManager = StateManager.getGridManager();
+      const start = gridManager.getStartPosition();
+      const end = gridManager.getEndPosition();
+
+      console.log("GridManager:", gridManager);
+      console.log("Start:", start);
+      console.log("End:", end);
+
+      if (!start || !end) {
+        console.error("Need start and end positions");
+        return;
+      }
+
+      try {
+        const bfs = new BFS(gridManager);
+        console.log("BFS created successfully:", bfs);
+        console.log("BFS methods:", {
           start: typeof bfs.start,
           step: typeof bfs.step,
           initialize: typeof bfs.initialize,
-          executeStep: typeof bfs.executeStep
-      });
-      
-      // Test initialization
-      bfs.initialize();
-      console.log("BFS initialized successfully");
-      
-  } catch (error) {
-      console.error("BFS test failed:", error);
-  }
-};
+          executeStep: typeof bfs.executeStep,
+        });
+
+        // Test initialization
+        bfs.initialize();
+        console.log("BFS initialized successfully");
+      } catch (error) {
+        console.error("BFS test failed:", error);
+      }
+    };
   } catch (error) {
     // This will now show exactly where the error occurred
     debugError("MAIN_INIT", error);
